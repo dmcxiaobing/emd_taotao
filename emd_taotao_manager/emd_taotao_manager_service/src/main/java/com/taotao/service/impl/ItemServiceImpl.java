@@ -1,5 +1,6 @@
 package com.taotao.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,11 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.taotao.common.pojo.EasyUIDataGridResult;
+import com.taotao.common.pojo.TaotaoResult;
+import com.taotao.common.utils.IDUtils;
 import com.taotao.mapper.TbItemMapper;
 import com.taotao.pojo.TbItem;
+import com.taotao.pojo.TbItemDesc;
 import com.taotao.pojo.TbItemExample;
 import com.taotao.service.ItemService;
 
@@ -50,7 +54,27 @@ public class ItemServiceImpl implements ItemService {
 		result.setRows(list);
 		// 设置总记录数
 		result.setTotal(pageInfo.getTotal());
+		// 返回结果
 		return result;
+	}
+	/**
+	 * 添加商品
+	 */
+	@Override
+	public TaotaoResult addItem(TbItem item, String desc) {
+		// 生成商品id
+		long itemId = IDUtils.genItemId();
+		// 补全item的属性
+		item.setId(itemId);
+		// 设置商品的状态，1-正常 2-下架 3-删除
+		item.setStatus((byte)1);
+		item.setCreated(new Date());
+		item.setUpdated(new Date());
+		// 向商品表插入数据
+		itemMapper.insert(item);
+		// 创建一个商品描述表对应的pojo
+		TbItemDesc itemDesc = new TbItemDesc();
+		return null;
 	}
 
 }

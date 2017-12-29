@@ -1,0 +1,31 @@
+Zookeeper:
+
+注册中心负责服务地址的注册与查找，相当于目录服务，服务提供者和消费者只在启动时与注册中心交互，注册中心不转发请求，压力较小。使用dubbo-2.3.3以上版本，建议使用zookeeper注册中心。
+Zookeeper是Apacahe Hadoop的子项目，是一个树型的目录服务，支持变更推送，适合作为Dubbo服务的注册中心，工业强度较高，可用于生产环境，并推荐使用
+
+Zookeeper的安装：
+第一步：安装jdk
+第二步：解压缩zookeeper压缩包
+第三步：将conf文件夹下zoo_sample.cfg复制一份，改名为zoo.cfg
+第四步：修改配置dataDir属性，指定一个真实目录
+第五步：
+启动zookeeper：bin/zkServer.sh start
+关闭zookeeper：bin/zkServer.sh stop
+查看zookeeper状态：bin/zkServer.sh status
+注意要关闭linux的防火墙。
+
+dubbo:
+需要安装tomcat，然后部署监控中心即可。
+
+1、部署监控中心：
+[root@localhost ~]# cp dubbo-admin-2.5.4.war apache-tomcat-7.0.47/webapps/dubbo-admin.war 
+
+2、启动tomcat
+
+3、访问http://192.168.25.167:8080/dubbo-admin/
+用户名：root
+密码：root
+
+如果监控中心和注册中心在同一台服务器上，可以不需要任何配置。
+如果不在同一台服务器，需要修改配置文件：
+/root/apache-tomcat-7.0.47/webapps/dubbo-admin/WEB-INF/dubbo.properties

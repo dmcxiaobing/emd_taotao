@@ -74,7 +74,13 @@ public class ItemServiceImpl implements ItemService {
 		itemMapper.insert(item);
 		// 创建一个商品描述表对应的pojo
 		TbItemDesc itemDesc = new TbItemDesc();
-		return null;
+		// 补全pojo的属性
+		itemDesc.setItemId(itemId);
+		itemDesc.setItemDesc(desc);
+		itemDesc.setCreated(new Date());
+		itemDesc.setUpdated(new Date());
+		// 返回添加成功的结果
+		return TaotaoResult.ok();
 	}
 
 }

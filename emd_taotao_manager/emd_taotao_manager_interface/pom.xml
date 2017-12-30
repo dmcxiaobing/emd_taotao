@@ -5,6 +5,7 @@
 		<groupId>com.david</groupId>
 		<artifactId>emd_taotao_manager</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<!--  <relativePath>../emd_taotao_manager/pom.xml</relativePath> -->
 	</parent>
 	<artifactId>emd_taotao_manager_interface</artifactId>
 	<description>由于这个只是接口，所以真正的实现类是service表现层。因此不需要dao层，只需要pojo即可</description>

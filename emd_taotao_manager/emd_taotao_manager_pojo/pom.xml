@@ -5,6 +5,7 @@
 		<groupId>com.david</groupId>
 		<artifactId>emd_taotao_manager</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		 <!-- <relativePath>../emd_taotao_manager/pom.xml</relativePath> -->
 	</parent>
 	<artifactId>emd_taotao_manager_pojo</artifactId>
 </project>

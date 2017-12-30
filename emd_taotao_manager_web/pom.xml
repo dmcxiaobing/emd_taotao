@@ -5,6 +5,7 @@
 		<groupId>com.david</groupId>
 		<artifactId>emd_taotao_parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../emd_taotao_parent/pom.xml</relativePath>
 	</parent>
 	<groupId>com.david</groupId>
 	<artifactId>emd_taotao_manager_web</artifactId>
@@ -104,6 +105,11 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.david</groupId>
+			<artifactId>emd_taotao_content_interface</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>

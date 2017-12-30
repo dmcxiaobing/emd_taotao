@@ -4,6 +4,7 @@
     <groupId>com.david</groupId>
     <artifactId>emd_taotao_content</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../emd_taotao_content/pom.xml</relativePath>
   </parent>
   <groupId>com.david</groupId>
   <artifactId>emd_taotao_content_interface</artifactId>

@@ -5,6 +5,8 @@
 		<groupId>com.david</groupId>
 		<artifactId>emd_taotao_parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<!-- MAC添加 -->
+		<relativePath>../emd_taotao_parent/pom.xml</relativePath>
 	</parent>
 	<groupId>com.david</groupId>
 	<artifactId>emd_taotao_common</artifactId>

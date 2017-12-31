@@ -8,6 +8,7 @@ import javax.swing.text.html.parser.ContentModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taotao.common.pojo.EasyUITreeNode;
 import com.taotao.common.pojo.TaotaoResult;
@@ -29,6 +30,7 @@ public class ContentCategoryServiceImpl implements ContentCategoryService {
 
 	@Autowired
 	private TbContentCategoryMapper contentCategoryMapper;
+
 	/**
 	 * 查看所有内容分类
 	 */
@@ -52,38 +54,42 @@ public class ContentCategoryServiceImpl implements ContentCategoryService {
 		}
 		return resultList;
 	}
+
 	/**
 	 * 添加一个内容分类
-	 * @param parentId 属于哪个分类的
-	 * @param name 分类的名称
+	 * 
+	 * @param parentId
+	 *            属于哪个分类的
+	 * @param name
+	 *            分类的名称
 	 * @return 返回结果
 	 */
 	@Override
 	public TaotaoResult addContentCategory(Long parentId, String name) {
-		//创建一个pojo对象
+		// 创建一个pojo对象
 		TbContentCategory tbContentCategory = new TbContentCategory();
-		//补全对象的属性
+		// 补全对象的属性
 		tbContentCategory.setName(name);
 		tbContentCategory.setParentId(parentId);
-		//设置状态。可选值。1正常，2删除
+		// 设置状态。可选值。1正常，2删除
 		tbContentCategory.setIsParent(false);
 		tbContentCategory.setStatus(1);
 		tbContentCategory.setCreated(new Date());
 		tbContentCategory.setUpdated(new Date());
-		//设置排序，默认值1
+		// 设置排序，默认值1
 		tbContentCategory.setSortOrder(1);
-		//插入到数据库
+		// 插入到数据库
 		contentCategoryMapper.insert(tbContentCategory);
 		// 判断父节点的状态。如果父节点为叶子节点则修改父节点。
 		TbContentCategory parent = contentCategoryMapper.selectByPrimaryKey(parentId);
 		if (!parent.getIsParent()) {
 			// 以前没有子节点，这次有了子节点，所以更新，并添加到父节点
 			parent.setIsParent(true);
-			//更新父节点
+			// 更新父节点
 			contentCategoryMapper.updateByPrimaryKey(parent);
 		}
 		return TaotaoResult.ok(tbContentCategory);
-		
+
 	}
 
 }

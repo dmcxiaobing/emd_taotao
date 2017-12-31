@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.taotao.common.pojo.EasyUITreeNode;
+import com.taotao.common.pojo.TaotaoResult;
 import com.taotao.content.service.ContentCategoryService;
 
 /**
@@ -33,5 +34,17 @@ public class ContentCategoryController {
 	public List<EasyUITreeNode> getContentCategoryList(@RequestParam(value = "id", defaultValue = "0") Long parentId) {
 		List<EasyUITreeNode> list = contentCategoryService.getContentCategoryList(parentId);
 		return list;
+	}
+	
+	/**
+	 * 添加一个内容分类
+	 * @param parentId 属于哪个分类的
+	 * @param name 分类的名称
+	 * @return 返回结果
+	 */
+	@RequestMapping("/content/category/create")
+	@ResponseBody
+	public TaotaoResult addContentCategory(Long parentId,String name) {
+		return contentCategoryService.addContentCategory(parentId, name);
 	}
 }

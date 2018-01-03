@@ -68,6 +68,7 @@ public class ContentServiceImpl implements ContentService {
 			String json = jedisClient.hget(INDEX_CONTENT, cid + "");
 			// 查询到结果，把json转换成list返回
 			if (StringUtils.isNotBlank(json)) {
+				System.out.println("查询Redis缓存了");
 				// 不等于空，则有数据
 				List<TbContent> list = JsonUtils.jsonToList(json, TbContent.class);
 				return list;
@@ -77,11 +78,12 @@ public class ContentServiceImpl implements ContentService {
 		}
 		// 缓存中没有数据，则需要查询数据库
 		TbContentExample tbContentExample = new TbContentExample();
-		com.taotao.pojo.TbContentExample.Criteria criteria = tbContentExample.createCriteria();
+		TbContentExample.Criteria criteria = tbContentExample.createCriteria();
 		// 设置查询条件
 		criteria.andCategoryIdEqualTo(cid);
 		// 执行查询
 		List<TbContent> list = contentMapper.selectByExample(tbContentExample);
+		System.out.println("查询数据库了");
 		// 将结果添加到redis中。添加缓存数据时，不能影响正常逻辑。
 		try {
 			jedisClient.hset(INDEX_CONTENT, "" + cid, JsonUtils.objectToJson(list));

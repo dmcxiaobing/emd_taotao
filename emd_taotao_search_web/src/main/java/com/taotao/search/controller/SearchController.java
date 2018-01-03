@@ -1,5 +1,7 @@
 package com.taotao.search.controller;
 
+import org.springframework.stereotype.Controller;
+
 /**
  * 搜索的controller
  * 

@@ -21,7 +21,7 @@ import com.taotao.pojo.TbItemExample;
  */
 public class TestPageHelper {
 
-	@Test
+//	@Test
 	public void testPageHelper() throws Exception {
 		// 1，在mybatis的配置文件中配置分页插件
 		// 2，在执行查询之前配置分页条件。使用PageHelper的静态方法

@@ -1,6 +1,5 @@
 package com.taotao.portal.controller;
 
-import static org.hamcrest.CoreMatchers.not;
 
 import java.util.ArrayList;
 import java.util.List;

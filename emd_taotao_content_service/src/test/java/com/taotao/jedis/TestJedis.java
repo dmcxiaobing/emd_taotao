@@ -22,10 +22,12 @@ public class TestJedis {
 	/**
 	 * 简单测试.使用单机版
 	 */
-	// @Test
+	@Test
 	public void testJedis() {
 		// 创建一个jedis对象。需要指定服务器的ip和端口号
-		Jedis jedis = new Jedis("192.168.197.128", 6379);
+		Jedis jedis = new Jedis("192.168.1.188", 6379);
+		// 设置连接密码  
+		jedis.auth("redis");  
 		// 直接操作数据库
 		jedis.set("jedis-key", "david");
 		// 取出数据

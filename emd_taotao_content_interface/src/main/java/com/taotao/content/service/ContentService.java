@@ -1,5 +1,7 @@
 package com.taotao.content.service;
 
+import java.util.List;
+
 import com.taotao.common.pojo.TaotaoResult;
 import com.taotao.pojo.TbContent;
 
@@ -14,5 +16,9 @@ public interface ContentService {
 	 * 添加内容
 	 */
 	TaotaoResult addContent(TbContent content);
+	/**
+	 * 根据cid查询轮廓图的内容列表
+	 */
+	List<TbContent> getContentByCid(Long aD1_CATEGORY_ID);
 
 }

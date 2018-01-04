@@ -14,5 +14,6 @@
   <modules>
   	<module>emd_taotao_search_interface</module>
   	<module>emd_taotao_search_service</module>
+  	<module>emd_taotao_search_dao</module>
   </modules>
 </project>

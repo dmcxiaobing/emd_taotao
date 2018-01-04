@@ -16,4 +16,16 @@
   	<module>emd_taotao_search_service</module>
   	<module>emd_taotao_search_dao</module>
   </modules>
+  <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<path>/</path>
+					<port>8084</port>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

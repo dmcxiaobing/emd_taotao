@@ -34,40 +34,45 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	@Override
 	public SearchResult search(String queryString, Integer page, Integer rows) {
-		// 首先创建一个SolrQuery对象
-		SolrQuery solrQuery = new SolrQuery();
-		// 根据查询条件拼装查询对象
-		solrQuery.setQuery(queryString);
-		// 设置分页条件
-		if (page < 1) {
-			page = 1;
-		}
-		if (rows < 1) {
-			rows = 10;
-		}
-		// 设置从第几条记录开始
-		solrQuery.setStart((page - 1) * rows);
-		// 设置每页显示的记录数
-		solrQuery.setRows(rows);
+		try {
+			// 首先创建一个SolrQuery对象
+			SolrQuery solrQuery = new SolrQuery();
+			// 根据查询条件拼装查询对象
+			solrQuery.setQuery(queryString);
+			// 设置分页条件
+			if (page < 1) {
+				page = 1;
+			}
+			if (rows < 1) {
+				rows = 10;
+			}
+			// 设置从第几条记录开始
+			solrQuery.setStart((page - 1) * rows);
+			// 设置每页显示的记录数
+			solrQuery.setRows(rows);
 
-		// 设置默认搜索域，这里直接设置标题域
-		solrQuery.set("df", "item_title");
-		// 设置高亮显示
-		solrQuery.setHighlight(true);
-		solrQuery.addHighlightField("item_title");
-		solrQuery.setHighlightSimplePre("<font color='red'>");
-		solrQuery.setHighlightSimplePost("</font>");
-		// 调用dao进行查询
-		SearchResult searchResult = searchDao.search(solrQuery);
-		// 计算查询结果的总页数..因为查询出的结果数据和总记录数
-		long recordCount = searchResult.getRecordCount();
-		long pages = recordCount/rows;
-		if (recordCount%rows>0) {
-			// 总记录数不能整除每页记录数，则加1
-			pages+=1;
+			// 设置默认搜索域，这里直接设置标题域
+			solrQuery.set("df", "item_title");
+			// 设置高亮显示
+			solrQuery.setHighlight(true);
+			solrQuery.addHighlightField("item_title");
+			solrQuery.setHighlightSimplePre("<font color='red'>");
+			solrQuery.setHighlightSimplePost("</font>");
+			// 调用dao进行查询
+			SearchResult searchResult = searchDao.search(solrQuery);
+			// 计算查询结果的总页数..因为查询出的结果数据和总记录数
+			long recordCount = searchResult.getRecordCount();
+			long pages = recordCount/rows;
+			if (recordCount%rows>0) {
+				// 总记录数不能整除每页记录数，则加1
+				pages+=1;
+			}
+			searchResult.setTotalPages(pages);
+			// 返回结果
+			return searchResult;
+		} catch (Exception e) {
+			return null;
 		}
-		searchResult.setTotalPages(pages);
-		// 返回结果
-		return searchResult;
+		
 	}
 }

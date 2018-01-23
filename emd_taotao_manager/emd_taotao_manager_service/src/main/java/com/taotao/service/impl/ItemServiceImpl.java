@@ -3,7 +3,16 @@ package com.taotao.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
@@ -29,6 +38,11 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired
 	private TbItemMapper itemMapper;
 
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Resource(name="itemAddtopic")
+	private Destination destination;
+	
 	/**
 	 * 根据Id获取到商品
 	 */
@@ -79,6 +93,16 @@ public class ItemServiceImpl implements ItemService {
 		itemDesc.setItemDesc(desc);
 		itemDesc.setCreated(new Date());
 		itemDesc.setUpdated(new Date());
+		// 向activemq发送添加商品的消息，这样搜索等其他模块，可以更新所需要的功能
+		jmsTemplate.send(desc, new MessageCreator() {
+			
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				// 发送商品的id
+				TextMessage textMessage = session.createTextMessage(itemId+"");
+				return textMessage;
+			}
+		});
 		// 返回添加成功的结果
 		return TaotaoResult.ok();
 	}

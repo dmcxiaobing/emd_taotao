@@ -50,7 +50,7 @@ public class ContentServiceImpl implements ContentService {
 		// 插入到数据库
 		contentMapper.insert(content);
 		// 同步redis缓存。可以直接删除，因为前台访问会更新redis。
-
+		jedisClient.hdel(INDEX_CONTENT, content.getCategoryId().toString());
 		return TaotaoResult.ok(content);
 	}
 

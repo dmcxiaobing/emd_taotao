@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+	
+	<context:annotation-config/>
+	 <!-- 加载配置属性文件 -->
+	  <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="300"/> <!--最大能够保持idel状态的对象数-->
+        <property name="maxTotal" value="60000"/><!--最大分配的对象数-->
+        <property name="testOnBorrow" value="true"/><!--当调用borrow Oject方法时，是否进行有效性检查-->
+    </bean>
+	
+	
+	<!-- redis单机版 -->
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<!-- constructor-arg name="host" value="192.168.1.188"/>	
+		<constructor-arg name="port" value="6379"/> -->	
+		<constructor-arg index="0" ref="jedisPoolConfig"/>
+        <constructor-arg index="1" value="192.168.1.188"/>
+        <constructor-arg index="2" value="6379" type="int"/>
+        <constructor-arg index="3" value="100000" type="int"/>
+        <constructor-arg index="4" value="redis"/>
+	</bean>
+	<bean id="jedisClientPool" class="com.taotao.jedis.JedisClientPool"/>
+	<!-- redis集群 -->
+	<!-- <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+		<constructor-arg>
+			<set>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"/>
+					<constructor-arg name="port" value="7001"/>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"/>
+					<constructor-arg name="port" value="7002"/>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"/>
+					<constructor-arg name="port" value="7003"/>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"/>
+					<constructor-arg name="port" value="7004"/>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"/>
+					<constructor-arg name="port" value="7005"/>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"/>
+					<constructor-arg name="port" value="7006"/>
+				</bean>
+			</set>
+		</constructor-arg>
+	</bean>
+	<bean id="jedisClientCluster" class="com.taotao.jedis.JedisClientCluster"/> -->
+</beans>

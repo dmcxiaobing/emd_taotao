@@ -2,13 +2,17 @@ package com.taotao.sso.service.imp;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import com.taotao.common.pojo.TaotaoResult;
+import com.taotao.common.utils.JsonUtils;
+import com.taotao.jedis.JedisClient;
 import com.taotao.mapper.TbUserMapper;
 import com.taotao.pojo.TbUser;
 import com.taotao.pojo.TbUserExample;
@@ -28,6 +32,15 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private TbUserMapper tbUserMapper;
 
+	@Autowired
+	private JedisClient jedisClient;
+	// redis中用户Session的前缀。即存放token时由此字段+token作为key
+	@Value("${USER_SESSION}")
+	private String USER_SESSION;
+	// session的过期时间.即用户的token过期时间
+	@Value("${SESSION_EXPIRE}")
+	private Integer SESSION_EXPIRE;
+	
 	/**
 	 * 检测用户名是否可用
 	 */
@@ -111,8 +124,34 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public TaotaoResult login(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		// 首先判断用户名和密码是否正确
+		TbUserExample example = new TbUserExample();
+		Criteria criteria = example.createCriteria();
+		// 添加查询条件
+		criteria.andUsernameEqualTo(username);
+		// 执行查询
+		List<TbUser> userList = tbUserMapper.selectByExample(example);
+		if (userList == null || userList.size()<0) {
+			// 这里其实就是用户名不正确，故意给用户提示模糊错误
+			return TaotaoResult.build(400, "用户名或密码不正确");
+		}
+		// 如果根据用户名查到了数据库中的用户，则再去匹配密码
+		TbUser dbUser = userList.get(0);
+		// 匹配密码时，记得用MD5进行加密匹配
+		if (!dbUser.getPassword().equals(DigestUtils.md5DigestAsHex(password.getBytes()))) {
+			// 如果不匹配，则登录失败
+			return TaotaoResult.build(400, "用户名或密码不正确");
+		}		
+		// 如果登陆成功，生成一个token，并将其保存在redis中，这样以后根据token判断用户是否登录状态
+		String token = UUID.randomUUID().toString();
+		// 将token作为key,用户信息作为value，存放到redis中
+		//为了安全起见，将密码不保存。清空
+		dbUser.setPassword(null);
+		jedisClient.set(USER_SESSION+":"+token, JsonUtils.objectToJson(dbUser));
+		// 设置key的过期时间
+		jedisClient.expire(USER_SESSION+":"+token,SESSION_EXPIRE);
+		// 返回登录成功，其中将token一并返回
+		return TaotaoResult.ok(token);
 	}
 
 }

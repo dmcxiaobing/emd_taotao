@@ -59,6 +59,7 @@ public class UserController {
 	 * 登陆
 	 */
 	@RequestMapping(value="/user/login",method=RequestMethod.POST)
+	@ResponseBody
 	public TaotaoResult login(String username,String password,HttpServletRequest request,HttpServletResponse response) {
 		// 接受两个参数。用户名和密码。调用service进行登录
 		TaotaoResult taotaoResult = userService.login(username, password);
@@ -70,6 +71,29 @@ public class UserController {
 		// 响应结果数据，json数据，包含token
 		return taotaoResult;
 	}
+
+	/**
+	 * 根据token，查询用户信息
+	 */
+	@RequestMapping(value="/user/token/{token}",method=RequestMethod.GET)
+	@ResponseBody
+	public TaotaoResult getUserByToken(@PathVariable String token,HttpServletRequest request,HttpServletResponse response) {
+		// 根据token，查询用户信息
+		TaotaoResult taotaoResult = userService.getUserByToken(token);
+		// 响应结果数据，json数据
+		return taotaoResult;
+	}
 	
+	/**
+	 * 根据token，清除redis中键
+	 */
+	@RequestMapping(value="/user/deleteToken/{token}",method=RequestMethod.GET)
+	@ResponseBody
+	public TaotaoResult deleteToken(@PathVariable String token,HttpServletRequest request,HttpServletResponse response) {
+		// 根据token，清除redis的信息
+		TaotaoResult taotaoResult = userService.deleteToken(token);
+		// 响应结果数据，json数据
+		return taotaoResult;
+	}
 	
 }

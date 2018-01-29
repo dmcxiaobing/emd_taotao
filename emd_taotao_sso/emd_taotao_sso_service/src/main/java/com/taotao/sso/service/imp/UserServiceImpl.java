@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 	// session的过期时间.即用户的token过期时间
 	@Value("${SESSION_EXPIRE}")
 	private Integer SESSION_EXPIRE;
-	
+
 	/**
 	 * 检测用户名是否可用
 	 */
@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
 		criteria.andUsernameEqualTo(username);
 		// 执行查询
 		List<TbUser> userList = tbUserMapper.selectByExample(example);
-		if (userList == null || userList.size()<0) {
+		if (userList == null || userList.size() < 0) {
 			// 这里其实就是用户名不正确，故意给用户提示模糊错误
 			return TaotaoResult.build(400, "用户名或密码不正确");
 		}
@@ -141,17 +141,48 @@ public class UserServiceImpl implements UserService {
 		if (!dbUser.getPassword().equals(DigestUtils.md5DigestAsHex(password.getBytes()))) {
 			// 如果不匹配，则登录失败
 			return TaotaoResult.build(400, "用户名或密码不正确");
-		}		
+		}
 		// 如果登陆成功，生成一个token，并将其保存在redis中，这样以后根据token判断用户是否登录状态
 		String token = UUID.randomUUID().toString();
 		// 将token作为key,用户信息作为value，存放到redis中
-		//为了安全起见，将密码不保存。清空
+		// 为了安全起见，将密码不保存。清空
 		dbUser.setPassword(null);
-		jedisClient.set(USER_SESSION+":"+token, JsonUtils.objectToJson(dbUser));
+		jedisClient.set(USER_SESSION + ":" + token, JsonUtils.objectToJson(dbUser));
 		// 设置key的过期时间
-		jedisClient.expire(USER_SESSION+":"+token,SESSION_EXPIRE);
+		jedisClient.expire(USER_SESSION + ":" + token, SESSION_EXPIRE);
 		// 返回登录成功，其中将token一并返回
 		return TaotaoResult.ok(token);
+	}
+
+	/**
+	 * 根据token，查询用户信息
+	 */
+	@Override
+	public TaotaoResult getUserByToken(String token) {
+		// 先查询token是否存在，如果不存在为错误或者假的。
+		String jsonVaule = jedisClient.get(USER_SESSION + ":" + token);
+		if (StringUtils.isBlank(jsonVaule)) {
+			return TaotaoResult.build(400, "token错误或者登陆已过期");
+		}
+		// 如果不为空，则查询到了。重新设置过期时间，并将user对象设置到TaoTaoResult结果中
+		jedisClient.expire(USER_SESSION + ":" + token, SESSION_EXPIRE);
+		// 把json转成User对象
+		TbUser user = JsonUtils.jsonToPojo(jsonVaule, TbUser.class);
+		return TaotaoResult.ok(user);
+	}
+	/**
+	 * 根据token。清除redis中的token信息。
+	 */
+	@Override
+	public TaotaoResult deleteToken(String token) {
+		// 先查询token是否存在，如果不存在为错误或者假的。
+		String jsonVaule = jedisClient.get(USER_SESSION + ":" + token);
+		if (StringUtils.isBlank(jsonVaule)) {
+			return TaotaoResult.build(400, "token错误或者登陆已过期");
+		}
+		// 如果不为空，则查询到了，执行清除操作
+		jedisClient.del(token);
+		return TaotaoResult.ok();
 	}
 
 }

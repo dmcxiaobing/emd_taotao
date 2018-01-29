@@ -4,14 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
 /**
  * 单机版操作redis
+ * 
  * @Author ：David
  * @新浪微博 ：http://weibo.com/mcxiaobing
  * @GitHub: https://github.com/QQ986945193
  */
 public class JedisClientPool implements JedisClient {
-	
+
 	@Autowired
 	private JedisPool jedisPool;
 
@@ -85,6 +87,13 @@ public class JedisClientPool implements JedisClient {
 		Long result = jedis.hdel(key, field);
 		jedis.close();
 		return result;
+	}
+
+	@Override
+	public void del(String key) {
+		Jedis jedis = jedisPool.getResource();
+		jedis.del(key);
+		jedis.close();
 	}
 
 }
